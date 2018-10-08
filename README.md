@@ -1,20 +1,18 @@
-# Simple Bitcoin JSON-RPC client based on GuzzleHttp
-
-[![Latest Stable Version](https://poser.pugx.org/denpa/php-bitcoinrpc/v/stable)](https://packagist.org/packages/denpa/php-bitcoinrpc)
-[![License](https://poser.pugx.org/denpa/php-bitcoinrpc/license)](https://packagist.org/packages/denpa/php-bitcoinrpc)
-[![Build Status](https://travis-ci.org/denpamusic/php-bitcoinrpc.svg)](https://travis-ci.org/denpamusic/php-bitcoinrpc)
-[![Code Climate](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/gpa.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc)
-[![Code Coverage](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/badges/coverage.svg)](https://codeclimate.com/github/denpamusic/php-bitcoinrpc/coverage)
-[![Join the chat at https://gitter.im/php-bitcoinrpc/Lobby](https://badges.gitter.im/php-bitcoinrpc/Lobby.svg)](https://gitter.im/php-bitcoinrpc/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Simple Bitcore JSON-RPC client based on GuzzleHttp
 
 ## Installation
-Run ```php composer.phar require denpa/php-bitcoinrpc``` in your project directory or add following lines to composer.json
+Run ```php composer.phar require dali/php-bitcorerpc``` in your project directory or add following lines to composer.json
 ```javascript
 "require": {
-    "denpa/php-bitcoinrpc": "^2.0"
+    "dali/php-bitcorerpc": "^2.0"
 }
 ```
 and run ```php composer.phar install```.
+
+**Installation on Ubuntu 16.04**
+```sh
+sudo apt-get install php-xml php7.0
+```
 
 ## Requirements
 PHP 7.0 or higher
@@ -28,11 +26,11 @@ Create new object with url as parameter
  **/
 // require 'vendor/autoload.php';
 
-use Denpa\Bitcoin\Client as BitcoinClient;
+use Dali\Bitcore\Client as BitcoreClient;
 
-$bitcoind = new BitcoinClient('http://rpcuser:rpcpassword@localhost:8332/');
+$bitcored = new BitcoreClient('http://rpcuser:rpcpassword@localhost:8332/');
 ```
-or use array to define your bitcoind settings
+or use array to define your bitcored settings
 ```php
 /**
  * Don't forget to include composer autoloader by uncommenting line below
@@ -40,9 +38,9 @@ or use array to define your bitcoind settings
  **/
 // require 'vendor/autoload.php';
 
-use Denpa\Bitcoin\Client as BitcoinClient;
+use Dali\Bitcore\Client as BitcoreClient;
 
-$bitcoind = new BitcoinClient([
+$bitcored = new BitcoreClient([
     'scheme'   => 'http',                 // optional, default http
     'host'     => 'localhost',            // optional, default localhost
     'port'     => 8332,                   // optional, default 8332
@@ -51,12 +49,12 @@ $bitcoind = new BitcoinClient([
     'ca'       => '/etc/ssl/ca-cert.pem'  // optional, for use with https scheme
 ]);
 ```
-Then call methods defined in [Bitcoin Core API Documentation](https://bitcoin.org/en/developer-reference#bitcoin-core-apis) with magic:
+Then call methods defined in [Bitcore Core API Documentation](https://bitcore.org/en/developer-reference#bitcore-core-apis) with magic:
 ```php
 /**
  * Get block info.
  */
-$block = $bitcoind->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+$block = $bitcored->getBlock('000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
 $block('hash')->get();     // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 $block['height'];          // 0 (array access)
@@ -75,19 +73,19 @@ $block('tx')->last();      // txid of last transaction
 /**
  * Send transaction.
  */
-$result = $bitcoind->sendToAddress('mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.1);
+$result = $bitcored->sendToAddress('mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.1);
 $txid = $result->get();
 
 /**
  * Get transaction amount.
  */
-$result = $bitcoind->listSinceBlock();
-$bitcoin = $result->sum('transactions.*.amount');
-$satoshi = \Denpa\Bitcoin\to_satoshi($bitcoin);
+$result = $bitcored->listSinceBlock();
+$bitcore = $result->sum('transactions.*.amount');
+$satoshi = \Dali\Bitcore\to_satoshi($bitcore);
 ```
 To send asynchronous request, add Async to method name:
 ```php
-$bitcoind->getBlockAsync(
+$bitcored->getBlockAsync(
     '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
     function ($response) {
         // success
@@ -103,7 +101,7 @@ You can also send requests using request method:
 /**
  * Get block info.
  */
-$block = $bitcoind->request('getBlock', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
+$block = $bitcored->request('getBlock', '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f');
 
 $block('hash');            // 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 $block['height'];          // 0 (array access)
@@ -121,13 +119,13 @@ $block->random(1, 'tx');   // get random txid
 /**
  * Send transaction.
  */
-$result = $bitcoind->request('sendtoaddress', 'mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.06);
+$result = $bitcored->request('sendtoaddress', 'mmXgiR6KAhZCyQ8ndr2BCfEq1wNG2UnyG6', 0.06);
 $txid = $result->get();
 
 ```
 or requestAsync method for asynchronous calls:
 ```php
-$bitcoind->requestAsync(
+$bitcored->requestAsync(
     'getBlock',
     '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
     function ($response) {
@@ -140,12 +138,12 @@ $bitcoind->requestAsync(
 ```
 
 ## Multi-Wallet RPC
-You can use `wallet($name)` function to do a [Multi-Wallet RPC call](https://en.bitcoin.it/wiki/API_reference_(JSON-RPC)#Multi-wallet_RPC_calls):
+You can use `wallet($name)` function to do a [Multi-Wallet RPC call](https://en.bitcore.it/wiki/API_reference_(JSON-RPC)#Multi-wallet_RPC_calls):
 ```php
 /**
  * Get wallet2.dat balance.
  */
-$balance = $bitcoind->wallet('wallet2.dat')->getbalance();
+$balance = $bitcored->wallet('wallet2.dat')->getbalance();
 
 echo $balance->get(); // 0.10000000
 ```
@@ -153,30 +151,30 @@ echo $balance->get(); // 0.10000000
 
 ## Helpers
 Package provides following helpers to assist with value handling.
-#### `to_bitcoin()`
-Converts value in satoshi to bitcoin.
+#### `to_bitcore()`
+Converts value in satoshi to bitcore.
 ```php
-echo Denpa\Bitcoin\to_bitcoin(100000); // 0.00100000
+echo Dali\Bitcore\to_bitcore(100000); // 0.00100000
 ```
 #### `to_satoshi()`
-Converts value in bitcoin to satoshi.
+Converts value in bitcore to satoshi.
 ```php
-echo Denpa\Bitcoin\to_satoshi(0.001); // 100000
+echo Dali\Bitcore\to_satoshi(0.001); // 100000
 ```
 #### `to_ubtc()`
-Converts value in bitcoin to ubtc/bits.
+Converts value in bitcore to ubtc/bits.
 ```php
-echo Denpa\Bitcoin\to_ubtc(0.001); // 1000.0000
+echo Dali\Bitcore\to_ubtc(0.001); // 1000.0000
 ```
 #### `to_mbtc()`
-Converts value in bitcoin to mbtc.
+Converts value in bitcore to mbtc.
 ```php
-echo Denpa\Bitcoin\to_mbtc(0.001); // 1.0000
+echo Dali\Bitcore\to_mbtc(0.001); // 1.0000
 ```
 #### `to_fixed()`
 Trims float value to precision without rounding.
 ```php
-echo Denpa\Bitcoin\to_fixed(0.1236, 3); // 0.123
+echo Dali\Bitcore\to_fixed(0.1236, 3); // 0.123
 ```
 
 ## License

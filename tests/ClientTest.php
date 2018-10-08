@@ -1,8 +1,8 @@
 <?php
 
-use Denpa\Bitcoin;
-use Denpa\Bitcoin\Exceptions;
-use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Dali\Bitcore;
+use Dali\Bitcore\Exceptions;
+use Dali\Bitcore\Responses\BitcoredResponse;
 use GuzzleHttp\Psr7\Response;
 
 class ClientTest extends TestCase
@@ -16,7 +16,7 @@ class ClientTest extends TestCase
     {
         parent::setUp();
 
-        $this->bitcoind = new Bitcoin\Client();
+        $this->bitcored = new Bitcore\Client();
     }
 
     /**
@@ -35,17 +35,17 @@ class ClientTest extends TestCase
      */
     public function testUrlParser($url, $scheme, $host, $port, $user, $password)
     {
-        $bitcoind = new Bitcoin\Client($url);
+        $bitcored = new Bitcore\Client($url);
 
-        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
+        $this->assertInstanceOf(Bitcore\Client::class, $bitcored);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcored->getConfig('base_uri');
 
         $this->assertEquals($base_uri->getScheme(), $scheme);
         $this->assertEquals($base_uri->getHost(), $host);
         $this->assertEquals($base_uri->getPort(), $port);
 
-        $auth = $bitcoind->getConfig('auth');
+        $auth = $bitcored->getConfig('auth');
         $this->assertEquals($auth[0], $user);
         $this->assertEquals($auth[1], $password);
     }
@@ -75,7 +75,7 @@ class ClientTest extends TestCase
     public function testUrlParserWithInvalidUrl()
     {
         try {
-            $bitcoind = new Bitcoin\Client('cookies!');
+            $bitcored = new Bitcore\Client('cookies!');
 
             $this->expectException(Exceptions\ClientException::class);
         } catch (Exceptions\ClientException $e) {
@@ -90,19 +90,19 @@ class ClientTest extends TestCase
      */
     public function testClientSetterGetter()
     {
-        $bitcoind = new Bitcoin\Client('http://old_client.org');
-        $this->assertInstanceOf(Bitcoin\Client::class, $bitcoind);
+        $bitcored = new Bitcore\Client('http://old_client.org');
+        $this->assertInstanceOf(Bitcore\Client::class, $bitcored);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcored->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'old_client.org');
 
-        $oldClient = $bitcoind->getClient();
+        $oldClient = $bitcored->getClient();
         $this->assertInstanceOf(\GuzzleHttp\Client::class, $oldClient);
 
         $newClient = new \GuzzleHttp\Client(['base_uri' => 'http://new_client.org']);
-        $bitcoind->setClient($newClient);
+        $bitcored->setClient($newClient);
 
-        $base_uri = $bitcoind->getConfig('base_uri');
+        $base_uri = $bitcored->getConfig('base_uri');
         $this->assertEquals($base_uri->getHost(), 'new_client.org');
     }
 
@@ -113,15 +113,15 @@ class ClientTest extends TestCase
      */
     public function testCaOption()
     {
-        $bitcoind = new Bitcoin\Client();
+        $bitcored = new Bitcore\Client();
 
-        $this->assertEquals(null, $bitcoind->getConfig('ca'));
+        $this->assertEquals(null, $bitcored->getConfig('ca'));
 
-        $bitcoind = new Bitcoin\Client([
+        $bitcored = new Bitcore\Client([
             'ca' => __FILE__,
         ]);
 
-        $this->assertEquals(__FILE__, $bitcoind->getConfig('verify'));
+        $this->assertEquals(__FILE__, $bitcored->getConfig('verify'));
     }
 
     /**
@@ -135,7 +135,7 @@ class ClientTest extends TestCase
             $this->getBlockResponse(),
         ]);
 
-        $response = $this->bitcoind
+        $response = $this->bitcored
             ->setClient($guzzle)
             ->request(
                 'getblockheader',
@@ -165,7 +165,7 @@ class ClientTest extends TestCase
             $this->getBalanceResponse(),
         ]);
 
-        $response = $this->bitcoind
+        $response = $this->bitcored
             ->setClient($guzzle)
             ->wallet($wallet)
             ->request('getbalance');
@@ -190,12 +190,12 @@ class ClientTest extends TestCase
             $this->getBalanceResponse(),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->wallet($wallet)
             ->requestAsync('getbalance', []);
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
 
         $this->assertEquals(
             $this->getHistoryRequestUri()->getPath(),
@@ -215,12 +215,12 @@ class ClientTest extends TestCase
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (BitcoindResponse $response) {
+            $this->callback(function (BitcoredResponse $response) {
                 return $response->get() == self::$getBlockResponse;
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->requestAsync(
                 'getblockheader',
@@ -230,7 +230,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
 
         $request = $this->getHistoryRequestBody();
         $this->assertEquals($this->makeRequestBody(
@@ -251,7 +251,7 @@ class ClientTest extends TestCase
             $this->getBlockResponse(),
         ]);
 
-        $response = $this->bitcoind
+        $response = $this->bitcored
             ->setClient($guzzle)
             ->getBlockHeader(
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'
@@ -277,12 +277,12 @@ class ClientTest extends TestCase
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (BitcoindResponse $response) {
+            $this->callback(function (BitcoredResponse $response) {
                 return $response->get() == self::$getBlockResponse;
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getBlockHeaderAsync(
                 '000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f',
@@ -291,7 +291,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
 
         $request = $this->getHistoryRequestBody();
         $this->assertEquals($this->makeRequestBody(
@@ -302,21 +302,21 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test bitcoind exception.
+     * Test bitcored exception.
      *
      * @return void
      */
-    public function testBitcoindException()
+    public function testBitcoredException()
     {
         $guzzle = $this->mockGuzzle([
             $this->rawTransactionError(200),
         ]);
 
-        $this->expectException(Exceptions\BitcoindException::class);
+        $this->expectException(Exceptions\BitcoredException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -324,24 +324,24 @@ class ClientTest extends TestCase
     }
 
     /**
-     * Test async bitcoind exception.
+     * Test async bitcored exception.
      *
      * @return void
      */
-    public function testAsyncBitcoindException()
+    public function testAsyncBitcoredException()
     {
         $guzzle = $this->mockGuzzle([
             $this->rawTransactionError(200),
         ]);
 
         $onFulfilled = $this->mockCallable([
-            $this->callback(function (Exceptions\BitcoindException $exception) {
+            $this->callback(function (Exceptions\BitcoredException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -351,7 +351,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
     }
 
     /**
@@ -365,11 +365,11 @@ class ClientTest extends TestCase
             $this->rawTransactionError(500),
         ]);
 
-        $this->expectException(Exceptions\BitcoindException::class);
+        $this->expectException(Exceptions\BitcoredException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -391,7 +391,7 @@ class ClientTest extends TestCase
         $this->expectExceptionMessage($this->error500());
         $this->expectExceptionCode(500);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -416,7 +416,7 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -427,7 +427,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
     }
 
     /**
@@ -441,11 +441,11 @@ class ClientTest extends TestCase
             $this->requestExceptionWithResponse(),
         ]);
 
-        $this->expectException(Exceptions\BitcoindException::class);
+        $this->expectException(Exceptions\BitcoredException::class);
         $this->expectExceptionMessage(self::$rawTransactionError['message']);
         $this->expectExceptionCode(self::$rawTransactionError['code']);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -464,13 +464,13 @@ class ClientTest extends TestCase
         ]);
 
         $onRejected = $this->mockCallable([
-            $this->callback(function (Exceptions\BitcoindException $exception) {
+            $this->callback(function (Exceptions\BitcoredException $exception) {
                 return $exception->getMessage() == self::$rawTransactionError['message'] &&
                     $exception->getCode() == self::$rawTransactionError['code'];
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -481,7 +481,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
     }
 
     /**
@@ -499,7 +499,7 @@ class ClientTest extends TestCase
         $this->expectExceptionMessage('test');
         $this->expectExceptionCode(0);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->getRawTransaction(
                 '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b'
@@ -524,7 +524,7 @@ class ClientTest extends TestCase
             }),
         ]);
 
-        $this->bitcoind
+        $this->bitcored
             ->setClient($guzzle)
             ->requestAsync(
                 'getrawtransaction',
@@ -535,7 +535,7 @@ class ClientTest extends TestCase
                 }
             );
 
-        $this->bitcoind->__destruct();
+        $this->bitcored->__destruct();
     }
 
     /**
@@ -562,7 +562,7 @@ class ClientTest extends TestCase
     }
 }
 
-class FakeClient extends Bitcoin\Client
+class FakeClient extends Bitcore\Client
 {
     /**
      * Gets response handler class name.
@@ -575,7 +575,7 @@ class FakeClient extends Bitcoin\Client
     }
 }
 
-class FakeResponse extends Bitcoin\Responses\Response
+class FakeResponse extends Bitcore\Responses\Response
 {
     //
 }

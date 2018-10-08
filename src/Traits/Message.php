@@ -1,6 +1,6 @@
 <?php
 
-namespace Denpa\Bitcoin\Traits;
+namespace Dali\Bitcore\Traits;
 
 use Psr\Http\Message\StreamInterface;
 

@@ -1,12 +1,12 @@
 <?php
 
-use Denpa\Bitcoin\Exceptions;
-use Denpa\Bitcoin\Responses\BitcoindResponse;
+use Dali\Bitcore\Exceptions;
+use Dali\Bitcore\Responses\BitcoredResponse;
 use GuzzleHttp\Psr7\BufferStream;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 
-class BitcoindResponseTest extends TestCase
+class BitcoredResponseTest extends TestCase
 {
     /**
      * Set up test.
@@ -18,7 +18,7 @@ class BitcoindResponseTest extends TestCase
         parent::setUp();
 
         $this->guzzleResponse = $this->getBlockResponse();
-        $this->response = new BitcoindResponse($this->guzzleResponse);
+        $this->response = new BitcoredResponse($this->guzzleResponse);
         $this->response = $this->response->withHeader('X-Test', 'test');
     }
 
@@ -63,7 +63,7 @@ class BitcoindResponseTest extends TestCase
      */
     public function testNoResult()
     {
-        $response = new BitcoindResponse($this->rawTransactionError());
+        $response = new BitcoredResponse($this->rawTransactionError());
         $this->assertFalse($response->hasResult());
     }
 
@@ -119,7 +119,7 @@ class BitcoindResponseTest extends TestCase
      */
     public function testError()
     {
-        $response = new BitcoindResponse($this->rawTransactionError());
+        $response = new BitcoredResponse($this->rawTransactionError());
 
         $this->assertTrue($response->hasError());
 
@@ -558,8 +558,8 @@ class BitcoindResponseTest extends TestCase
 
         $serialized = sprintf(
             'C:%u:"%s":%u:{%s}',
-            strlen(BitcoindResponse::class),
-            BitcoindResponse::class,
+            strlen(BitcoredResponse::class),
+            BitcoredResponse::class,
             strlen($serializedContainer),
             $serializedContainer
         );

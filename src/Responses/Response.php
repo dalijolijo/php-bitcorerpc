@@ -1,8 +1,8 @@
 <?php
 
-namespace Denpa\Bitcoin\Responses;
+namespace Dali\Bitcore\Responses;
 
-use Denpa\Bitcoin\Traits\Message;
+use Dali\Bitcore\Traits\Message;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class Response implements ResponseInterface

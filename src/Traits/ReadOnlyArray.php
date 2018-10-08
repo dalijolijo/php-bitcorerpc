@@ -1,8 +1,8 @@
 <?php
 
-namespace Denpa\Bitcoin\Traits;
+namespace Dali\Bitcore\Traits;
 
-use Denpa\Bitcoin\Exceptions;
+use Dali\Bitcore\Exceptions;
 
 trait ReadOnlyArray
 {

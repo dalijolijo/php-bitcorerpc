@@ -1,6 +1,6 @@
 <?php
 
-namespace Denpa\Bitcoin\Exceptions;
+namespace Dali\Bitcore\Exceptions;
 
 use RuntimeException;
 

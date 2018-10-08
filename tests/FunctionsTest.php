@@ -1,6 +1,6 @@
 <?php
 
-use Denpa\Bitcoin;
+use Dali\Bitcore;
 
 class FunctionsTest extends TestCase
 {
@@ -8,60 +8,60 @@ class FunctionsTest extends TestCase
      * Test satoshi to btc converter.
      *
      * @param int    $satoshi
-     * @param string $bitcoin
+     * @param string $bitcore
      *
      * @return void
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToBtc($satoshi, $bitcoin)
+    public function testToBtc($satoshi, $bitcore)
     {
-        $this->assertEquals($bitcoin, Bitcoin\to_bitcoin($satoshi));
+        $this->assertEquals($bitcore, Bitcore\to_bitcore($satoshi));
     }
 
     /**
-     * Test bitcoin to satoshi converter.
+     * Test bitcore to satoshi converter.
      *
      * @param int    $satoshi
-     * @param string $bitcoin
+     * @param string $bitcore
      *
      * @return void
      *
      * @dataProvider satoshiBtcProvider
      */
-    public function testToSatoshi($satoshi, $bitcoin)
+    public function testToSatoshi($satoshi, $bitcore)
     {
-        $this->assertEquals($satoshi, Bitcoin\to_satoshi($bitcoin));
+        $this->assertEquals($satoshi, Bitcore\to_satoshi($bitcore));
     }
 
     /**
-     * Test bitcoin to ubtc/bits converter.
+     * Test bitcore to ubtc/bits converter.
      *
      * @param int    $ubtc
-     * @param string $bitcoin
+     * @param string $bitcore
      *
      * @return void
      *
      * @dataProvider bitsBtcProvider
      */
-    public function testToBits($ubtc, $bitcoin)
+    public function testToBits($ubtc, $bitcore)
     {
-        $this->assertEquals($ubtc, Bitcoin\to_ubtc($bitcoin));
+        $this->assertEquals($ubtc, Bitcore\to_ubtc($bitcore));
     }
 
     /**
-     * Test bitcoin to mbtc converter.
+     * Test bitcore to mbtc converter.
      *
      * @param float  $mbtc
-     * @param string $bitcoin
+     * @param string $bitcore
      *
      * @return void
      *
      * @dataProvider mbtcBtcProvider
      */
-    public function testToMbtc($mbtc, $bitcoin)
+    public function testToMbtc($mbtc, $bitcore)
     {
-        $this->assertEquals($mbtc, Bitcoin\to_mbtc($bitcoin));
+        $this->assertEquals($mbtc, Bitcore\to_mbtc($bitcore));
     }
 
     /**
@@ -77,11 +77,11 @@ class FunctionsTest extends TestCase
      */
     public function testToFixed($float, $precision, $expected)
     {
-        $this->assertSame($expected, Bitcoin\to_fixed($float, $precision));
+        $this->assertSame($expected, Bitcore\to_fixed($float, $precision));
     }
 
     /**
-     * Provides satoshi and bitcoin values.
+     * Provides satoshi and bitcore values.
      *
      * @return array
      */

@@ -1,13 +1,13 @@
 <?php
 
-namespace Denpa\Bitcoin\Exceptions;
+namespace Dali\Bitcore\Exceptions;
 
 use RuntimeException;
 
-class BitcoindException extends RuntimeException
+class BitcoredException extends RuntimeException
 {
     /**
-     * Constructs new bitcoind exception.
+     * Constructs new bitcored exception.
      *
      * @param object $error
      *

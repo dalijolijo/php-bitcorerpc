@@ -1,6 +1,6 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Dali\Bitcore;
 
 use GuzzleHttp\Client as GuzzleHttp;
 use GuzzleHttp\ClientInterface;
@@ -134,7 +134,7 @@ class Client
     }
 
     /**
-     * Makes request to Bitcoin Core.
+     * Makes request to Bitcore Core.
      *
      * @param string $method
      * @param mixed  $params
@@ -149,7 +149,7 @@ class Client
 
             if ($response->hasError()) {
                 // throw exception on error
-                throw new Exceptions\BitcoindException($response->error());
+                throw new Exceptions\BitcoredException($response->error());
             }
 
             return $response;
@@ -159,7 +159,7 @@ class Client
     }
 
     /**
-     * Makes async request to Bitcoin Core.
+     * Makes async request to Bitcore Core.
      *
      * @param string        $method
      * @param mixed         $params
@@ -191,7 +191,7 @@ class Client
     }
 
     /**
-     * Makes request to Bitcoin Core.
+     * Makes request to Bitcore Core.
      *
      * @param string $method
      * @param array  $params
@@ -224,7 +224,7 @@ class Client
             'password'   => '',
         ];
 
-        // use same var name as laravel-bitcoinrpc
+        // use same var name as laravel-bitcorerpc
         if (
             !array_key_exists('password', $config) &&
             array_key_exists('pass', $config)
@@ -283,7 +283,7 @@ class Client
      */
     protected function getResponseHandler()
     {
-        return 'Denpa\\Bitcoin\\Responses\\BitcoindResponse';
+        return 'Dali\\Bitcore\\Responses\\BitcoredResponse';
     }
 
     /**
@@ -363,7 +363,7 @@ class Client
     {
         if (!is_null($callback)) {
             if ($response->hasError()) {
-                $response = new Exceptions\BitcoindException($response->error());
+                $response = new Exceptions\BitcoredException($response->error());
             }
 
             $callback($response);
@@ -398,7 +398,7 @@ class Client
             $response = $exception->getResponse();
 
             if ($response->hasError()) {
-                return new Exceptions\BitcoindException($response->error());
+                return new Exceptions\BitcoredException($response->error());
             }
         }
 

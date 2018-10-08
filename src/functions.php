@@ -1,16 +1,16 @@
 <?php
 
-namespace Denpa\Bitcoin;
+namespace Dali\Bitcore;
 
-if (!function_exists('to_bitcoin')) {
+if (!function_exists('to_bitcore')) {
     /**
-     * Converts from satoshi to bitcoin.
+     * Converts from satoshi to bitcore.
      *
      * @param int $satoshi
      *
      * @return string
      */
-    function to_bitcoin($satoshi)
+    function to_bitcore($satoshi)
     {
         return bcdiv((int) $satoshi, 1e8, 8);
     }
@@ -18,43 +18,43 @@ if (!function_exists('to_bitcoin')) {
 
 if (!function_exists('to_satoshi')) {
     /**
-     * Converts from bitcoin to satoshi.
+     * Converts from bitcore to satoshi.
      *
-     * @param float $bitcoin
+     * @param float $bitcore
      *
      * @return string
      */
-    function to_satoshi($bitcoin)
+    function to_satoshi($bitcore)
     {
-        return bcmul(to_fixed($bitcoin, 8), 1e8);
+        return bcmul(to_fixed($bitcore, 8), 1e8);
     }
 }
 
 if (!function_exists('to_ubtc')) {
     /**
-     * Converts from bitcoin to ubtc/bits.
+     * Converts from bitcore to ubtc/bits.
      *
-     * @param float $bitcoin
+     * @param float $bitcore
      *
      * @return string
      */
-    function to_ubtc($bitcoin)
+    function to_ubtc($bitcore)
     {
-        return bcmul(to_fixed($bitcoin, 8), 1e6, 4);
+        return bcmul(to_fixed($bitcore, 8), 1e6, 4);
     }
 }
 
 if (!function_exists('to_mbtc')) {
     /**
-     * Converts from bitcoin to mbtc.
+     * Converts from bitcore to mbtc.
      *
-     * @param float $bitcoin
+     * @param float $bitcore
      *
      * @return string
      */
-    function to_mbtc($bitcoin)
+    function to_mbtc($bitcore)
     {
-        return bcmul(to_fixed($bitcoin, 8), 1e3, 4);
+        return bcmul(to_fixed($bitcore, 8), 1e3, 4);
     }
 }
 
